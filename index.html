@@ -15,15 +15,32 @@
     -webkit-tap-highlight-color: transparent;
   }
 
-  /* Hidden initially */
-  .hidden {
-    opacity: 0;
-    pointer-events: none;
+  /* Hidden at first */
+  .hidden-content {
+    display: none;
+  }
+
+  /* Start button */
+  #startButton {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #e60073;
+    color: white;
+    font-size: clamp(18px, 5vw, 24px);
+    padding: 15px 25px;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    z-index: 10;
+    box-shadow: 0 4px 15px rgba(230, 0, 115, 0.6);
     transition: opacity 1s ease;
   }
-  .visible {
-    opacity: 1;
-    pointer-events: auto;
+
+  #startButton.fade-out {
+    opacity: 0;
+    pointer-events: none;
   }
 
   /* Center Photo */
@@ -106,80 +123,48 @@
     box-shadow: 0 0 10px #ff83b5;
   }
   @keyframes fall {
-    to {
-      transform: translateY(105vh);
-    }
-  }
-
-  /* Start Button */
-  #startBtn {
-    position: fixed;
-    top:0; left:0;
-    width:100vw; height:100vh;
-    background: #ffdee3;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:3rem;
-    font-family: 'Dancing Script', cursive;
-    color:#b8005f;
-    border:none;
-    cursor:pointer;
-    z-index:20;
-    transition: opacity 1s ease;
-  }
-
-  #musicControl {
-    position: fixed;
-    bottom: 15px;
-    right: 15px;
-    background: #e60073;
-    border: none;
-    padding: 10px 16px;
-    border-radius: 25px;
-    font-size: clamp(18px, 5vw, 24px);
-    color: white;
-    cursor: pointer;
-    box-shadow: 0 4px 15px rgba(230, 0, 115, 0.6);
-    z-index: 10;
-    transition: background 0.3s ease;
-  }
-  #musicControl:hover {
-    background: #b8005f;
+    to { transform: translateY(105vh); }
   }
 </style>
 </head>
 <body>
 
 <!-- Start Button -->
-<button id="startBtn">CLICK TO START 🎵</button>
+<button id="startButton">CLICK TO START 🎵</button>
 
-<!-- Birthday Content Hidden Initially -->
-<div id="content" class="hidden">
+<!-- Hidden Content -->
+<div class="hidden-content" id="content">
   <img class="center-photo" src="central.jpg" alt="Sneha's Photo" />
+
   <div class="center-msg">
     Happy Birthday Sneha! 🎉<br />
-    I hope your world will shine like its use to. <br />
+    I hope your world will shine like it used to. <br />
     I hope you will always be happy. 💖
-    <div class="quote">"THANKS FOR BEING WITH ME ALL THIS TIME "</div>
+    <div class="quote">
+      "THANKS FOR BEING WITH ME ALL THIS TIME "
+    </div>
   </div>
 
-  <button id="musicControl" aria-label="Play/Pause Music">🔈</button>
+  <audio id="bgMusic" loop>
+    <source src="music.mp3" type="audio/mpeg" />
+  </audio>
 </div>
 
-<audio id="bgMusic" loop>
-  <source src="music.mp3" type="audio/mpeg" />
-</audio>
-
 <script>
-// Elements
-const startBtn = document.getElementById("startBtn");
+const startButton = document.getElementById("startButton");
 const content = document.getElementById("content");
 const audio = document.getElementById("bgMusic");
-const musicControl = document.getElementById("musicControl");
 
-// Message and photo data
-const messages = ["Happy Birthday Darling 🎂","Stay Beautiful 🌸","You're a Blessing 💝","Wishing You Joy 🎈","Love You Always 💖","Shine Bright ✨","God Bless You 🙏, Stay safe bby 💖 💖"];
+const messages = [
+  "Happy Birthday Darling 🎂",
+  "Stay Beautiful 🌸",
+  "You're a Blessing 💝",
+  "Wishing You Joy 🎈",
+  "Love You Always 💖",
+  "Shine Bright ✨",
+  "God Bless You 🙏, Stay safe bby 💖 💖",
+];
+
 const photoData = [
   {src: "1.png", wish: "Wishing you a day full of love!"},
   {src: "2.png", wish: "Happy Birthday to the most amazing girl!"},
@@ -187,48 +172,67 @@ const photoData = [
   {src: "4.png", wish: "You light up my world 🌟"},
   {src: "5.png", wish: "So proud to have you in my life 💕"}, 
   {src: "6.png", wish: "Love you always mine bby 💋💋"},
-  {src: "5.png", wish: "stay happy and safe bby💕"},
+  {src: "5.png", wish: "Stay happy and safe bby💕"},
 ];
 
-// Falling elements
 let usedPositions = [];
-function getRandomX(min, max){return Math.floor(Math.random()*(max-min+1))+min;}
-function isFarEnough(x){return usedPositions.every(pos=>Math.abs(pos-x)>70);}
-function getNonOverlappingX(){let tries=0;while(tries<50){const x=getRandomX(0,window.innerWidth-120);if(isFarEnough(x)){usedPositions.push(x);if(usedPositions.length>15) usedPositions.shift();return x;}tries++;}return getRandomX(0,window.innerWidth-120);}
-function createMessage(){const msg=document.createElement("div");msg.className="message";msg.textContent=messages[Math.floor(Math.random()*messages.length)];msg.style.left=getNonOverlappingX()+"px";msg.style.animationDuration=(Math.random()*1.5+3).toFixed(2)+"s";document.body.appendChild(msg);setTimeout(()=>msg.remove(),5000);}
-function createPhotoWithWish(){const data=photoData[Math.floor(Math.random()*photoData.length)];const container=document.createElement("div");container.className="photo-container";container.style.left=getNonOverlappingX()+"px";container.style.animationDuration=(Math.random()*1.5+3).toFixed(2)+"s";const img=document.createElement("img");img.src=data.src;const wish=document.createElement("span");wish.textContent=data.wish;container.appendChild(img);container.appendChild(wish);document.body.appendChild(container);setTimeout(()=>container.remove(),5000);}
-
-// Start button click
-startBtn.addEventListener("click", ()=>{
-  // Play music
-  audio.play().catch(()=>{});
-  audio.loop = true;
-  
-  // Fade out start button
-  startBtn.style.opacity = 0;
-  setTimeout(()=>startBtn.style.display='none',1000);
-  
-  // Show birthday content
-  content.classList.remove("hidden");
-  content.classList.add("visible");
-  
-  // Start falling animations
-  setInterval(createMessage,1000);
-  setInterval(createPhotoWithWish,1800);
-});
-
-// Music control button
-musicControl.addEventListener("click",()=>{
-  if(audio.paused){audio.play();musicControl.textContent="🔊";}
-  else{audio.pausemusicControl.addEventListener("click", ()=>{
-  if(audio.paused){
-    audio.play();
-    musicControl.textContent = "🔊";
-  } else {
-    audio.pause();
-    musicControl.textContent = "🔈";
+function getRandomX(min, max) {
+  return Math.floor(Math.random()*(max-min+1))+min;
+}
+function isFarEnough(x) {
+  return usedPositions.every(pos=>Math.abs(pos-x)>70);
+}
+function getNonOverlappingX(){
+  let tries=0;
+  while(tries<50){
+    const x=getRandomX(0,window.innerWidth-120);
+    if(isFarEnough(x)){usedPositions.push(x); if(usedPositions.length>15) usedPositions.shift(); return x;}
+    tries++;
   }
+  return getRandomX(0,window.innerWidth-120);
+}
+
+function createMessage(){
+  const msg=document.createElement("div");
+  msg.className="message";
+  msg.textContent=messages[Math.floor(Math.random()*messages.length)];
+  msg.style.left=getNonOverlappingX()+"px";
+  msg.style.animationDuration=(Math.random()*1.5+3).toFixed(2)+"s";
+  content.appendChild(msg);
+  setTimeout(()=>msg.remove(),5000);
+}
+
+function createPhotoWithWish(){
+  const data=photoData[Math.floor(Math.random()*photoData.length)];
+  const container=document.createElement("div");
+  container.className="photo-container";
+  container.style.left=getNonOverlappingX()+"px";
+  container.style.animationDuration=(Math.random()*1.5+3).toFixed(2)+"s";
+  const img=document.createElement("img");
+  img.src=data.src;
+  const wish=document.createElement("span");
+  wish.textContent=data.wish;
+  container.appendChild(img);
+  container.appendChild(wish);
+  content.appendChild(container);
+  setTimeout(()=>container.remove(),5000);
+}
+
+startButton.addEventListener("click", ()=>{
+  // Fade out button
+  startButton.classList.add("fade-out");
+  
+  // Show hidden content
+  content.style.display = "block";
+  
+  // Play music
+  audio.play();
+
+  // Start falling messages and photos
+  setInterval(createMessage, 1000);
+  setInterval(createPhotoWithWish, 1800);
 });
 </script>
+
 </body>
 </html>
