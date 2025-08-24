@@ -86,7 +86,7 @@
     color: #c2185b;
   }
 
-  /* Messages & photos falling animation */
+  /* Messages & photos falling animation (unchanged) */
   .message, .photo-container {
     position: absolute;
     top: -120px;
@@ -122,6 +122,18 @@
     padding: 3px 6px;
     box-shadow: 0 0 10px #ff83b5;
   }
+
+  /* Emoji rain style */
+  .emoji {
+    position: absolute;
+    top: -50px;
+    pointer-events: none;
+    animation: fall linear infinite;
+    z-index: 2;
+    font-size: 24px;
+    color: #1E90FF; /* blue */
+  }
+
   @keyframes fall {
     to { transform: translateY(105vh); }
   }
@@ -155,84 +167,100 @@ const startButton = document.getElementById("startButton");
 const content = document.getElementById("content");
 const audio = document.getElementById("bgMusic");
 
-const messages = [
-  "Happy Birthday Darling 🎂",
-  "Stay Beautiful 🌸",
-  "You're a Blessing 💝",
-  "Wishing You Joy 🎈",
-  "Love You Always 💖",
-  "Shine Bright ✨",
-  "God Bless You 🙏, Stay safe bby 💖 💖",
-];
-
-const photoData = [
-  {src: "1.png", wish: "Wishing you a day full of love!"},
-  {src: "2.png", wish: "Happy Birthday to the most amazing girl!"},
-  {src: "3.png", wish: "Keep shining, birthday my queen! 👑"},
-  {src: "4.png", wish: "You light up my world 🌟"},
-  {src: "5.png", wish: "So proud to have you in my life 💕"}, 
-  {src: "6.png", wish: "Love you always mine bby 💋💋"},
-  {src: "5.png", wish: "Stay happy and safe bby💕"},
-];
-
-let usedPositions = [];
-function getRandomX(min, max) {
-  return Math.floor(Math.random()*(max-min+1))+min;
-}
-function isFarEnough(x) {
-  return usedPositions.every(pos=>Math.abs(pos-x)>70);
-}
-function getNonOverlappingX(){
-  let tries=0;
-  while(tries<50){
-    const x=getRandomX(0,window.innerWidth-120);
-    if(isFarEnough(x)){usedPositions.push(x); if(usedPositions.length>15) usedPositions.shift(); return x;}
-    tries++;
-  }
-  return getRandomX(0,window.innerWidth-120);
+// Emoji rain
+function getRandomX() {
+  return Math.floor(Math.random() * window.innerWidth);
 }
 
-function createMessage(){
-  const msg=document.createElement("div");
-  msg.className="message";
-  msg.textContent=messages[Math.floor(Math.random()*messages.length)];
-  msg.style.left=getNonOverlappingX()+"px";
-  msg.style.animationDuration=(Math.random()*1.5+3).toFixed(2)+"s";
-  content.appendChild(msg);
-  setTimeout(()=>msg.remove(),5000);
+function createEmoji() {
+  const emoji = document.createElement("div");
+  emoji.className = "emoji";
+  emoji.textContent = "🩵";
+  emoji.style.left = getRandomX() + "px";
+  emoji.style.fontSize = Math.floor(Math.random()*24+20) + "px";
+  emoji.style.animationDuration = (Math.random()*2 + 3).toFixed(2) + "s";
+  content.appendChild(emoji);
+  setTimeout(() => emoji.remove(), 5000);
 }
 
-function createPhotoWithWish(){
-  const data=photoData[Math.floor(Math.random()*photoData.length)];
-  const container=document.createElement("div");
-  container.className="photo-container";
-  container.style.left=getNonOverlappingX()+"px";
-  container.style.animationDuration=(Math.random()*1.5+3).toFixed(2)+"s";
-  const img=document.createElement("img");
-  img.src=data.src;
-  const wish=document.createElement("span");
-  wish.textContent=data.wish;
-  container.appendChild(img);
-  container.appendChild(wish);
-  content.appendChild(container);
-  setTimeout(()=>container.remove(),5000);
-}
-
-startButton.addEventListener("click", ()=>{
+// Start everything
+startButton.addEventListener("click", () => {
   // Fade out button
   startButton.classList.add("fade-out");
-  
+
   // Show hidden content
   content.style.display = "block";
-  
+
   // Play music
   audio.play();
 
-  // Start falling messages and photos
+  // Start emoji rain
+  setInterval(createEmoji, 150);
+
+  // Keep original falling messages and photos
+  const messages = [
+    "Happy Birthday Darling 🎂",
+    "Stay Beautiful 🌸",
+    "You're a Blessing 💝",
+    "Wishing You Joy 🎈",
+    "Love You Always 💖",
+    "Shine Bright ✨",
+    "God Bless You 🙏, Stay safe bby 💖 💖",
+  ];
+
+  const photoData = [
+    {src: "1.png", wish: "Wishing you a day full of love!"},
+    {src: "2.png", wish: "Happy Birthday to the most amazing girl!"},
+    {src: "3.png", wish: "Keep shining, birthday my queen! 👑"},
+    {src: "4.png", wish: "You light up my world 🌟"},
+    {src: "5.png", wish: "So proud to have you in my life 💕"}, 
+    {src: "6.png", wish: "Love you always mine bby 💋💋"},
+    {src: "5.png", wish: "Stay happy and safe bby💕"},
+  ];
+
+  let usedPositions = [];
+  function isFarEnough(x) {
+    return usedPositions.every(pos => Math.abs(pos-x) > 70);
+  }
+  function getNonOverlappingX(){
+    let tries=0;
+    while(tries<50){
+      const x=Math.floor(Math.random() * (window.innerWidth-120));
+      if(isFarEnough(x)){usedPositions.push(x); if(usedPositions.length>15) usedPositions.shift(); return x;}
+      tries++;
+    }
+    return Math.floor(Math.random() * (window.innerWidth-120));
+  }
+
+  function createMessage(){
+    const msg=document.createElement("div");
+    msg.className="message";
+    msg.textContent=messages[Math.floor(Math.random()*messages.length)];
+    msg.style.left=getNonOverlappingX()+"px";
+    msg.style.animationDuration=(Math.random()*1.5+3).toFixed(2)+"s";
+    content.appendChild(msg);
+    setTimeout(()=>msg.remove(),5000);
+  }
+
+  function createPhotoWithWish(){
+    const data=photoData[Math.floor(Math.random()*photoData.length)];
+    const container=document.createElement("div");
+    container.className="photo-container";
+    container.style.left=getNonOverlappingX()+"px";
+    container.style.animationDuration=(Math.random()*1.5+3).toFixed(2)+"s";
+    const img=document.createElement("img");
+    img.src=data.src;
+    const wish=document.createElement("span");
+    wish.textContent=data.wish;
+    container.appendChild(img);
+    container.appendChild(wish);
+    content.appendChild(container);
+    setTimeout(()=>container.remove(),5000);
+  }
+
   setInterval(createMessage, 1000);
   setInterval(createPhotoWithWish, 1800);
 });
 </script>
-
 </body>
 </html>
