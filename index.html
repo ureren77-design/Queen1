@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Happy Birthday, Darling 🎂</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&family=Dancing+Script&family=Kaushan+Script&display=swap" rel="stylesheet" />
+<style>
+  body {
+    margin: 0;
+    overflow: hidden;
+    background: linear-gradient(to bottom, #fff0f5, #ffe6f0);
+    font-family: 'Poppins', sans-serif;
+    color: #b8005f;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Center Photo */
+  .center-photo {
+    position: absolute;
+    top: 8%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: clamp(120px, 35vw, 200px);
+    height: clamp(120px, 35vw, 200px);
+    border-radius: 25px;
+    object-fit: cover;
+    box-shadow: 0 8px 20px rgba(184, 0, 95, 0.6);
+    z-index: 3;
+    border: 4px solid #e60073;
+    background: white;
+  }
+
+  /* Center Message below photo */
+  .center-msg {
+    position: absolute;
+    top: calc(8% + clamp(140px, 38vw, 220px) + 15px);
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    background: rgba(255, 255, 255, 0.85);
+    padding: 15px 20px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(230, 0, 115, 0.3);
+    font-family: 'Dancing Script', cursive;
+    font-size: clamp(18px, 4.5vw, 28px);
+    font-weight: 700;
+    text-align: center;
+    line-height: 1.4;
+    color: #a30052;
+    z-index: 4;
+  }
+
+  .quote {
+    font-family: 'Kaushan Script', cursive;
+    font-size: clamp(14px, 3.5vw, 20px);
+    margin-top: 10px;
+    color: #c2185b;
+  }
+
+  /* Messages & photos falling animation */
+  .message, .photo-container {
+    position: absolute;
+    top: -120px;
+    pointer-events: none;
+    animation: fall linear infinite;
+    z-index: 1;
+    will-change: transform;
+  }
+  .message {
+    font-family: 'Kaushan Script', cursive;
+    color: #e60073;
+    opacity: 0.85;
+    font-size: clamp(14px, 4vw, 22px);
+    animation-duration: 4s;
+  }
+  .photo-container img {
+    width: clamp(80px, 28vw, 150px);
+    height: clamp(80px, 28vw, 150px);
+    border-radius: 20px;
+    object-fit: cover;
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.3);
+    display: block;
+    margin-bottom: 5px;
+  }
+  .photo-container span {
+    display: block;
+    text-align: center;
+    font-family: 'Dancing Script', cursive;
+    color: #b8005f;
+    font-size: clamp(12px, 3vw, 16px);
+    background: rgba(255,255,255,0.9);
+    border-radius: 10px;
+    padding: 3px 6px;
+    box-shadow: 0 0 10px #ff83b5;
+  }
+  @keyframes fall {
+    to {
+      transform: translateY(105vh);
+    }
+  }
+
+  /* Music control button */
+  #musicControl {
+    position: fixed;
+    bottom: 15px;
+    right: 15px;
+    background: #e60073;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 25px;
+    font-size: clamp(18px, 5vw, 24px);
+    color: white;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(230, 0, 115, 0.6);
+    z-index: 10;
+    transition: background 0.3s ease;
+  }
+  #musicControl:hover {
+    background: #b8005f;
+  }
+</style>
+</head>
+<body>
+
+<img class="center-photo" src="central.jpg" alt="Sneha's Photo" />
+
+<div class="center-msg">
+  Happy Birthday Sneha! 🎉<br />
+  I hope your world will shine like its use to. <br />
+  I hope you will always be happy. 💖
+  <div class="quote">
+    "THANKS FOR BEING WITH ME ALL THIS TIME "
+  </div>
+</div>
+
+<audio id="bgMusic" loop playsinline>
+  <source src="Chamber Of Reflection (1).mp3" type="audio/mpeg" />
+</audio>
+
+<button id="musicControl" aria-label="Play/Pause Music">🔈</button>
+
+<script>
+const messages = [
+  "Happy Birthday Darling 🎂",
+  "Stay Beautiful 🌸",
+  "You're a Blessing 💝",
+  "Wishing You Joy 🎈",
+  "Love You Always 💖",
+  "Shine Bright ✨",
+  "God Bless You 🙏, Stay safe bby 💖 💖",
+];
+const photoData = [
+  {src: "1.png", wish: "Wishing you a day full of love!"},
+  {src: "2.png", wish: "Happy Birthday to the most amazing girl!"},
+  {src: "3.png", wish: "Keep shining, birthday my queen! 👑"},
+  {src: "4.png", wish: "You light up my world 🌟"},
+  {src: "5.png", wish: "So proud to have you in my life 💕"}, 
+   {src: "6.png", wish: "Love you always mine bby 💋💋"},
+  {src: "5.png", wish: "stay happy and safe bby💕"},
+];
+
+let usedPositions = [];
+function getRandomX(min, max){return Math.floor(Math.random()*(max-min+1))+min;}
+function isFarEnough(x){return usedPositions.every(pos=>Math.abs(pos-x)>70);}
+function getNonOverlappingX(){
+  let tries=0;
+  while(tries<50){
+    const x=getRandomX(0,window.innerWidth-120);
+    if(isFarEnough(x)){usedPositions.push(x); if(usedPositions.length>15) usedPositions.shift(); return x;}
+    tries++;
+  }
+  return getRandomX(0,window.innerWidth-120);
+}
+
+function createMessage(){
+  const msg=document.createElement("div");
+  msg.className="message";
+  msg.textContent=messages[Math.floor(Math.random()*messages.length)];
+  msg.style.left=getNonOverlappingX()+"px";
+  msg.style.animationDuration=(Math.random()*1.5+3).toFixed(2)+"s";
+  document.body.appendChild(msg);
+  setTimeout(()=>msg.remove(),5000);
+}
+
+function createPhotoWithWish(){
+  const data=photoData[Math.floor(Math.random()*photoData.length)];
+  const container=document.createElement("div");
+  container.className="photo-container";
+  container.style.left=getNonOverlappingX()+"px";
+  container.style.animationDuration=(Math.random()*1.5+3).toFixed(2)+"s";
+  const img=document.createElement("img");
+  img.src=data.src;
+  const wish=document.createElement("span");
+  wish.textContent=data.wish;
+  container.appendChild(img);
+  container.appendChild(wish);
+  document.body.appendChild(container);
+  setTimeout(()=>container.remove(),5000);
+}
+
+setInterval(createMessage,1000);
+setInterval(createPhotoWithWish,1800);
+
+const audio=document.getElementById("bgMusic");
+const musicControl=document.getElementById("musicControl");
+
+window.addEventListener("load",()=>{
+  audio.muted=true;
+  audio.play().catch(()=>{});
+  setTimeout(()=>audio.muted=false,2000);
+});
+musicControl.addEventListener("click",()=>{
+  if(audio.paused){audio.play();musicControl.textContent="🔊";}
+  else{audio.pause();musicControl.textContent="🔈";}
+});
+</script>
+</body>
+</html>
